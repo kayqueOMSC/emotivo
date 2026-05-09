@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Te Amo - DNA Emotivo</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --pink: #ff5ac8;
+      --soft-pink: rgba(255, 90, 200, 0.75);
+      --violet: rgba(155, 95, 255, 0.65);
+      --white: rgba(255, 255, 255, 0.95);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 90, 200, 0.22), transparent 28%),
+        radial-gradient(circle at 50% 55%, rgba(120, 65, 255, 0.16), transparent 36%),
+        linear-gradient(180deg, #180713 0%, #080208 60%, #000 100%);
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+    }
+
+    .screen {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .vignette {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 42%, rgba(0,0,0,0.62) 100%);
+      z-index: 5;
+    }
+
+    .particles {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      opacity: 0.55;
+    }
+
+    .particle {
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.75);
+      box-shadow: 0 0 12px rgba(255, 90, 200, 0.9);
+      animation: drift linear infinite;
+    }
+
+    @keyframes drift {
+      from { transform: translateY(105vh); opacity: 0; }
+      15% { opacity: 0.8; }
+      85% { opacity: 0.8; }
+      to { transform: translateY(-10vh); opacity: 0; }
+    }
+
+    .dna {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      filter: drop-shadow(0 0 18px rgba(255, 70, 190, 0.42));
+    }
+
+    .line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: max-content;
+      font-size: clamp(14px, 2.1vw, 28px);
+      font-weight: 800;
+      white-space: nowrap;
+      letter-spacing: 0.25px;
+      text-shadow:
+        0 2px 5px rgba(0,0,0,0.9),
+        0 0 8px rgba(255,255,255,0.22),
+        0 0 20px rgba(255,70,190,0.72);
+      will-change: transform, opacity, filter;
+      user-select: none;
+    }
+
+    .strand {
+      display: inline-block;
+      min-width: 112px;
+      text-align: center;
+    }
+
+    .heart {
+      display: inline-block;
+      color: var(--pink);
+      margin: 0 12px;
+      text-shadow:
+        0 0 10px rgba(255, 90, 200, 1),
+        0 0 26px rgba(255, 90, 200, 0.95),
+        0 0 44px rgba(155, 95, 255, 0.8);
+      animation: heartPulse 2.8s ease-in-out infinite;
+    }
+
+    @keyframes heartPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.22); }
+    }
+
+    .center-message {
+      position: absolute;
+      z-index: 6;
+      left: 50%;
+      bottom: clamp(28px, 6vh, 70px);
+      transform: translateX(-50%);
+      width: min(92vw, 850px);
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .center-message .main {
+      font-size: clamp(34px, 6.8vw, 86px);
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: -1px;
+      text-shadow:
+        0 0 18px rgba(255, 90, 200, 1),
+        0 0 45px rgba(255, 90, 200, 0.7),
+        0 0 70px rgba(155, 95, 255, 0.55);
+      animation: breathe 4s ease-in-out infinite;
+    }
+
+    .center-message .sub {
+      margin-top: 12px;
+      font-size: clamp(13px, 2.2vw, 22px);
+      font-weight: 500;
+      color: rgba(255,255,255,0.78);
+      text-shadow: 0 0 16px rgba(255, 90, 200, 0.5);
+      animation: fadeSub 6s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.88; }
+      50% { transform: scale(1.055); opacity: 1; }
+    }
+
+    @keyframes fadeSub {
+      0%, 100% { opacity: 0.55; }
+      50% { opacity: 0.95; }
+    }
+
+    .start-panel {
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(12px);
+    }
+
+    .card {
+      width: min(92vw, 460px);
+      padding: 26px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.045));
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 24px 90px rgba(0,0,0,0.55);
+      text-align: center;
+    }
+
+    .card h1 {
+      margin: 0 0 10px;
+      font-size: 29px;
+    }
+
+    .card p {
+      margin: 8px 0 18px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .button {
+      display: inline-block;
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 999px;
+      background: var(--pink);
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 28px rgba(255,90,200,0.58);
+      border: none;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .small-button {
+      background: rgba(255,255,255,0.12);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    input[type="file"] { display: none; }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .hidden { display: none; }
+
+    audio { display: none; }
+
+    @media (min-width: 900px) {
+      .line {
+        font-size: clamp(18px, 1.8vw, 30px);
+      }
+
+      .strand {
+        min-width: 138px;
+      }
+
+      .heart {
+        margin: 0 18px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .line {
+        font-size: clamp(13px, 4.1vw, 21px);
+      }
+
+      .strand {
+        min-width: 92px;
+      }
+
+      .heart {
+        margin: 0 8px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="particles" id="particles"></div>
+    <div class="dna" id="dna"></div>
+
+    <div class="center-message">
+      <div class="main">Te amo ❤️</div>
+      <div class="sub">em cada batida, em cada instante</div>
+    </div>
+
+    <div class="vignette"></div>
+
+    <div class="start-panel" id="startPanel">
+      <div class="card">
+        <h1>Te Amo DNA</h1>
+        <p>
+          Coloque este HTML e a música na mesma pasta com o nome:
+          <br><b>experience.mp3</b>
+        </p>
+
+        <button class="button" id="startButton">Iniciar com experience.mp3</button>
+
+        <label class="button small-button" for="audioFile">Ou escolher a música manualmente</label>
+        <input id="audioFile" type="file" accept="audio/*" />
+
+        <div class="hint">
+          Se o Android bloquear, use o botão de escolher a música manualmente.
+        </div>
+      </div>
+    </div>
+
+    <audio id="music" src="experience.mp3" preload="auto"></audio>
+  </div>
+
+  <script>
+    const dna = document.getElementById("dna");
+    const music = document.getElementById("music");
+    const audioFile = document.getElementById("audioFile");
+    const startPanel = document.getElementById("startPanel");
+    const startButton = document.getElementById("startButton");
+    const particles = document.getElementById("particles");
+
+    const config = {
+      text: "Te amo",
+      heart: "💞"
+    };
+
+    const elements = [];
+    let layout = {};
+
+    function calculateLayout() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const desktop = w >= 900;
+
+      layout = {
+        lines: desktop ? 34 : 44,
+        verticalSpacing: desktop ? Math.max(30, h / 36) : Math.max(25, h / 42),
+        amplitude: desktop ? Math.min(w * 0.34, 340) : Math.min(w * 0.34, 155),
+        waveSpeed: desktop ? 0.19 : 0.145,
+        baseRotationSpeed: 0.54,
+        perspective: desktop ? 0.46 : 0.56,
+        connectorOpacity: desktop ? 0.5 : 0.38
+      };
+    }
+
+    function createDNA() {
+      calculateLayout();
+      dna.innerHTML = "";
+      elements.length = 0;
+
+      for (let i = 0; i < layout.lines; i++) {
+        const line = document.createElement("div");
+        line.className = "line";
+        dna.appendChild(line);
+        elements.push(line);
+      }
+    }
+
+    function createParticles() {
+      particles.innerHTML = "";
+      const count = window.innerWidth >= 900 ? 58 : 34;
+
+      for (let i = 0; i < count; i++) {
+        const p = document.createElement("div");
+        p.className = "particle";
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.animationDuration = `${8 + Math.random() * 12}s`;
+        p.style.animationDelay = `${Math.random() * -18}s`;
+        p.style.opacity = `${0.25 + Math.random() * 0.6}`;
+        particles.appendChild(p);
+      }
+    }
+
+    function animate(time) {
+      const t = time * 0.001;
+      const center = layout.lines / 2;
+      const songTime = music.currentTime || 0;
+      const progress = music.duration ? Math.min(songTime / music.duration, 1) : 0;
+
+      // Crescimento emocional suave, parecido com a música Experience
+      const emotionalBuild = 1 + progress * 0.22;
+      const breath = 1 + Math.sin(t * 0.55) * 0.035;
+
+      elements.forEach((line, i) => {
+        const y = (i - center) * layout.verticalSpacing;
+        const phase = i * layout.waveSpeed + songTime * layout.baseRotationSpeed;
+
+        // Hélice principal
+        const x = Math.sin(phase) * layout.amplitude * emotionalBuild;
+
+        // Profundidade simulada
+        const depth = Math.cos(phase);
+        const scale = (1 + depth * layout.perspective * 0.20) * breath;
+        const opacity = 0.34 + (depth + 1) * 0.30;
+        const blur = depth < -0.38 ? 1.05 : 0;
+
+        // Evita embolar no PC: menos abertura de letras e texto mais estável
+        const spread = Math.abs(Math.sin(phase)) * (window.innerWidth >= 900 ? 2.2 : 3.6);
+        const spaced = createSpacedText(config.text, spread);
+
+        // Travessões centrais dão a sensação de "ligações" do DNA
+        const connectorSize = Math.max(2, Math.round(8 + Math.abs(depth) * 12));
+        const connector = "─".repeat(connectorSize);
+
+        line.innerHTML = `
+          <span class="strand">${spaced}</span>
+          <span style="opacity:${layout.connectorOpacity}">${connector}</span>
+          <span class="heart">${config.heart}</span>
+          <span style="opacity:${layout.connectorOpacity}">${connector}</span>
+          <span class="strand">${spaced}</span>
+        `;
+
+        line.style.transform =
+          `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+
+        line.style.opacity = opacity;
+        line.style.filter = `blur(${blur}px) brightness(${1 + progress * 0.28})`;
+        line.style.zIndex = Math.round(scale * 100);
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    function createSpacedText(text, amount) {
+      const spaces = " ".repeat(Math.round(amount));
+      return text.split("").join(spaces);
+    }
+
+    async function startExperience() {
+      try {
+        music.currentTime = 0;
+        startPanel.classList.add("hidden");
+        await music.play();
+      } catch (error) {
+        startPanel.classList.remove("hidden");
+        alert(
+          "Não consegui tocar experience.mp3 automaticamente. " +
+          "Confirme se o arquivo está na mesma pasta e com esse nome exato, ou escolha a música manualmente."
+        );
+      }
+    }
+
+    startButton.addEventListener("click", startExperience);
+
+    audioFile.addEventListener("change", async function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      music.src = URL.createObjectURL(file);
+      music.currentTime = 0;
+      startPanel.classList.add("hidden");
+
+      try {
+        await music.play();
+      } catch (error) {
+        alert("Toque novamente na tela para permitir o áudio.");
+      }
+    });
+
+    document.body.addEventListener("click", () => {
+      if (music.src && music.paused && startPanel.classList.contains("hidden")) {
+        music.play().catch(() => {});
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      createDNA();
+      createParticles();
+    });
+
+    createDNA();
+    createParticles();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

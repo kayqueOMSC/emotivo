@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Te Amo - História DNA</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 42%, rgba(255, 70, 170, 0.30), transparent 25%),
+        radial-gradient(circle at 50% 55%, rgba(110, 60, 255, 0.18), transparent 38%),
+        linear-gradient(180deg, #1b0613 0%, #080208 62%, #000 100%);
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+    }
+
+    .screen {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .dna {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      filter: drop-shadow(0 0 20px rgba(255, 80, 190, 0.55));
+    }
+
+    .line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: max-content;
+      color: rgba(255, 255, 255, 0.96);
+      font-size: clamp(16px, 3.1vw, 32px);
+      font-weight: 900;
+      letter-spacing: 0.25px;
+      white-space: pre;
+      transform: translate(-50%, -50%);
+      text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.95),
+        0 0 10px rgba(255, 255, 255, 0.55),
+        0 0 24px rgba(255, 60, 180, 0.92);
+      will-change: transform, opacity, filter;
+    }
+
+    .heart {
+      color: #ff5ac8;
+      text-shadow:
+        0 0 10px rgba(255, 90, 200, 1),
+        0 0 28px rgba(255, 90, 200, 0.95),
+        0 0 48px rgba(160, 95, 255, 0.85);
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      pointer-events: none;
+      background:
+        radial-gradient(circle at center, transparent 42%, rgba(0,0,0,0.68) 100%),
+        linear-gradient(90deg, rgba(0,0,0,0.34), transparent 22%, transparent 78%, rgba(0,0,0,0.34));
+    }
+
+    .story {
+      position: absolute;
+      z-index: 10;
+      left: 50%;
+      top: 50%;
+      width: min(92vw, 980px);
+      transform: translate(-50%, -50%);
+      text-align: center;
+      padding: 18px;
+      pointer-events: none;
+    }
+
+    .story-line {
+      min-height: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(28px, 5.2vw, 72px);
+      font-weight: 950;
+      line-height: 1.12;
+      letter-spacing: -0.8px;
+      color: rgba(255,255,255,0.98);
+      text-shadow:
+        0 4px 10px rgba(0,0,0,0.95),
+        0 0 18px rgba(255, 90, 200, 0.95),
+        0 0 42px rgba(255, 90, 200, 0.72),
+        0 0 76px rgba(150, 90, 255, 0.55);
+      opacity: 0;
+      transform: translateY(24px) scale(0.96);
+      transition: opacity 1.15s ease, transform 1.15s ease, filter 1.15s ease;
+      filter: blur(8px);
+    }
+
+    .story-line.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      filter: blur(0);
+    }
+
+    .story-line.hide {
+      opacity: 0;
+      transform: translateY(-24px) scale(1.03);
+      filter: blur(8px);
+    }
+
+    .small-memory {
+      position: absolute;
+      z-index: 8;
+      left: 50%;
+      bottom: clamp(26px, 7vh, 70px);
+      transform: translateX(-50%);
+      width: min(90vw, 760px);
+      text-align: center;
+      font-size: clamp(15px, 2vw, 23px);
+      color: rgba(255,255,255,0.78);
+      line-height: 1.45;
+      text-shadow: 0 0 18px rgba(255, 90, 200, 0.72);
+      opacity: 0.82;
+    }
+
+    .floating-heart {
+      position: absolute;
+      z-index: 4;
+      left: 50%;
+      top: 50%;
+      font-size: clamp(180px, 28vw, 420px);
+      color: rgba(255, 80, 190, 0.08);
+      transform: translate(-50%, -50%);
+      text-shadow:
+        0 0 50px rgba(255, 80, 190, 0.36),
+        0 0 110px rgba(160, 80, 255, 0.25);
+      animation: heartBreath 6s ease-in-out infinite;
+    }
+
+    @keyframes heartBreath {
+      0%, 100% { transform: translate(-50%, -50%) scale(0.92); opacity: 0.45; }
+      50% { transform: translate(-50%, -50%) scale(1.08); opacity: 0.78; }
+    }
+
+    .start-panel {
+      position: absolute;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(12px);
+    }
+
+    .card {
+      width: min(92vw, 470px);
+      padding: 26px;
+      border-radius: 28px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.045));
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 24px 90px rgba(0,0,0,0.58);
+      text-align: center;
+    }
+
+    .card h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    .card p {
+      margin: 8px 0 18px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .button {
+      display: inline-block;
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 999px;
+      background: #ff5ac8;
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 28px rgba(255,90,200,0.62);
+      border: none;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .small-button {
+      background: rgba(255,255,255,0.12);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    input[type="file"] { display: none; }
+    audio { display: none; }
+    .hidden { display: none; }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    @media (min-width: 900px) {
+      .line { font-size: clamp(17px, 1.72vw, 29px); }
+      .story-line { min-height: 260px; }
+    }
+
+    @media (max-width: 520px) {
+      .story { top: 47%; }
+      .story-line { min-height: 220px; }
+      .small-memory { bottom: 24px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="dna" id="dna"></div>
+    <div class="floating-heart">❤️</div>
+
+    <div class="story">
+      <div class="story-line" id="storyLine">Te amo.</div>
+    </div>
+
+    <div class="small-memory" id="smallMemory">
+      Uma história escrita em silêncio, sentida em cada batida.
+    </div>
+
+    <div class="overlay"></div>
+
+    <div class="start-panel" id="startPanel">
+      <div class="card">
+        <h1>Te Amo DNA</h1>
+        <p>
+          Coloque este HTML e a música na mesma pasta com o nome:
+          <br><b>experience.mp3</b>
+        </p>
+
+        <button class="button" id="startButton">Iniciar declaração</button>
+
+        <label class="button small-button" for="audioFile">Ou escolher a música manualmente</label>
+        <input id="audioFile" type="file" accept="audio/*" />
+
+        <div class="hint">
+          Se o Android bloquear o áudio, escolha a música manualmente.
+        </div>
+      </div>
+    </div>
+
+    <audio id="music" src="experience.mp3" preload="auto"></audio>
+  </div>
+
+  <script>
+    const dna = document.getElementById("dna");
+    const music = document.getElementById("music");
+    const audioFile = document.getElementById("audioFile");
+    const startPanel = document.getElementById("startPanel");
+    const startButton = document.getElementById("startButton");
+    const storyLine = document.getElementById("storyLine");
+    const smallMemory = document.getElementById("smallMemory");
+
+    const config = {
+      text: "Te amo",
+      heart: "💞"
+    };
+
+    const story = [
+      "Eu não sei em que momento exato meu coração escolheu você.",
+      "Talvez tenha sido no teu jeito de existir sem perceber o quanto ilumina tudo.",
+      "Talvez tenha sido no teu olhar, no teu sorriso, ou na paz que você me traz.",
+      "Mas eu sei de uma coisa: depois de você, nada em mim voltou a ser igual.",
+      "Você virou meu lugar seguro, meu pensamento favorito, minha saudade mais bonita.",
+      "Quando o mundo pesa, é em você que minha alma encontra descanso.",
+      "Quando eu penso no futuro, é o teu nome que aparece em silêncio dentro de mim.",
+      "Eu amo cada detalhe teu, até aqueles que você nem percebe que tem.",
+      "Amo tua presença, tua voz, teu carinho, teu jeito de me fazer querer ser melhor.",
+      "Se eu pudesse transformar sentimento em céu, o universo inteiro ainda seria pequeno.",
+      "Porque o que sinto por você não cabe em uma frase, nem em uma música, nem em uma vida só.",
+      "Você é a parte mais bonita da minha história.",
+      "É meu acaso favorito, minha escolha diária, meu amor mais sincero.",
+      "E se um dia faltar voz, tempo ou palavras...",
+      "que fique escrito aqui, em cada batida:",
+      "eu te amo mais do que qualquer texto conseguiria explicar."
+    ];
+
+    const memories = [
+      "Você não chegou apenas na minha vida. Você mudou o sentido dela.",
+      "Tem amor que é abrigo. Tem amor que é destino. Você é os dois.",
+      "Entre milhões de caminhos, meu coração reconheceu o teu.",
+      "Se amor fosse luz, você seria o meu amanhecer.",
+      "Eu escolheria você em todos os tempos, em todas as versões de mim."
+    ];
+
+    const elements = [];
+    let layout = {};
+    let currentStoryIndex = -1;
+    let currentMemoryIndex = -1;
+
+    function calculateLayout() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const desktop = w >= 900;
+
+      // Volta para uma animação mais parecida com a primeira: fluida e orgânica,
+      // mas corrige o desktop para não embolar.
+      layout = {
+        lines: desktop ? 42 : 46,
+        verticalSpacing: desktop ? Math.max(25, h / 43) : Math.max(25, h / 42),
+        amplitude: desktop ? Math.min(w * 0.31, 330) : Math.min(w * 0.37, 185),
+        waveSpeed: desktop ? 0.118 : 0.135,
+        rotationSpeed: desktop ? 0.80 : 0.88,
+        perspective: desktop ? 0.46 : 0.56,
+        textSpread: desktop ? 2.2 : 4.8
+      };
+    }
+
+    function createDNA() {
+      calculateLayout();
+      dna.innerHTML = "";
+      elements.length = 0;
+
+      for (let i = 0; i < layout.lines; i++) {
+        const line = document.createElement("div");
+        line.className = "line";
+        dna.appendChild(line);
+        elements.push(line);
+      }
+    }
+
+    function createSpacedText(text, amount) {
+      const spaces = " ".repeat(Math.round(amount));
+      return text.split("").join(spaces);
+    }
+
+    function animate(time) {
+      const t = time * 0.001;
+      const center = layout.lines / 2;
+      const songTime = music.currentTime || 0;
+      const progress = music.duration ? Math.min(songTime / music.duration, 1) : 0;
+
+      const emotionalGlow = 1 + progress * 0.28;
+      const breathing = 1 + Math.sin(t * 0.72) * 0.025;
+
+      elements.forEach((line, i) => {
+        const y = (i - center) * layout.verticalSpacing;
+        const phase =
+          i * layout.waveSpeed +
+          songTime * layout.rotationSpeed +
+          Math.sin(t * 0.22) * 0.10;
+
+        const x = Math.sin(phase) * layout.amplitude;
+        const depth = Math.cos(phase);
+
+        const scale = (1 + depth * layout.perspective * 0.22) * breathing;
+        const opacity = 0.64 + (depth + 1) * 0.18;
+        const blur = depth < -0.45 ? 0.55 : 0;
+
+        const spread = Math.abs(Math.sin(phase)) * layout.textSpread;
+        const spaced = createSpacedText(config.text, spread);
+
+        line.innerHTML = `
+          <span>${spaced}</span>
+          <span class="heart"> ${config.heart} </span>
+          <span>${spaced}</span>
+        `;
+
+        line.style.transform =
+          `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+
+        line.style.opacity = opacity;
+        line.style.filter = `blur(${blur}px) brightness(${emotionalGlow})`;
+        line.style.zIndex = Math.round(scale * 100);
+      });
+
+      updateStory(songTime);
+      requestAnimationFrame(animate);
+    }
+
+    function updateStory(songTime) {
+      // Troca a frase a cada 7.4s. Fica bonito com Experience e também funciona sem metadata do áudio.
+      const interval = 7.4;
+      const index = Math.min(Math.floor(songTime / interval), story.length - 1);
+
+      if (index !== currentStoryIndex) {
+        currentStoryIndex = index;
+
+        storyLine.classList.remove("show");
+        storyLine.classList.add("hide");
+
+        setTimeout(() => {
+          storyLine.textContent = story[index];
+          storyLine.classList.remove("hide");
+          storyLine.classList.add("show");
+        }, 550);
+      }
+
+      const memoryIndex = Math.floor(songTime / 13) % memories.length;
+      if (memoryIndex !== currentMemoryIndex) {
+        currentMemoryIndex = memoryIndex;
+        smallMemory.style.opacity = 0;
+
+        setTimeout(() => {
+          smallMemory.textContent = memories[memoryIndex];
+          smallMemory.style.opacity = 0.82;
+        }, 600);
+      }
+    }
+
+    async function startExperience() {
+      try {
+        music.currentTime = 0;
+        currentStoryIndex = -1;
+        currentMemoryIndex = -1;
+        startPanel.classList.add("hidden");
+        storyLine.classList.add("show");
+        await music.play();
+      } catch (error) {
+        startPanel.classList.remove("hidden");
+        alert(
+          "Não consegui tocar experience.mp3 automaticamente. " +
+          "Confirme se o arquivo está na mesma pasta e com esse nome exato, ou escolha a música manualmente."
+        );
+      }
+    }
+
+    startButton.addEventListener("click", startExperience);
+
+    audioFile.addEventListener("change", async function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      music.src = URL.createObjectURL(file);
+      music.currentTime = 0;
+      currentStoryIndex = -1;
+      currentMemoryIndex = -1;
+      startPanel.classList.add("hidden");
+      storyLine.classList.add("show");
+
+      try {
+        await music.play();
+      } catch (error) {
+        alert("Toque novamente na tela para permitir o áudio.");
+      }
+    });
+
+    document.body.addEventListener("click", () => {
+      if (music.src && music.paused && startPanel.classList.contains("hidden")) {
+        music.play().catch(() => {});
+      }
+    });
+
+    window.addEventListener("resize", () => {
+      createDNA();
+    });
+
+    createDNA();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

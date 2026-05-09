@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Te Amo DNA - Experience Auto</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 50% 45%, rgba(255, 80, 180, 0.25), transparent 28%),
+        radial-gradient(circle at center, #26101f 0%, #090309 62%, #000 100%);
+      overflow: hidden;
+      font-family: Arial, Helvetica, sans-serif;
+      color: white;
+    }
+
+    .screen {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .dna {
+      position: absolute;
+      inset: 0;
+      filter: drop-shadow(0 0 18px rgba(255, 70, 190, 0.45));
+    }
+
+    .line {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: max-content;
+      font-size: clamp(15px, 4vw, 32px);
+      font-weight: 900;
+      white-space: pre;
+      letter-spacing: 0.4px;
+      text-shadow:
+        0 2px 4px rgba(0,0,0,0.8),
+        0 0 10px rgba(255,255,255,0.35),
+        0 0 22px rgba(255,70,190,0.8);
+      will-change: transform, opacity, filter;
+    }
+
+    .heart {
+      color: #ff4fc3;
+      text-shadow:
+        0 0 10px rgba(255, 60, 190, 1),
+        0 0 26px rgba(255, 60, 190, 0.9),
+        0 0 42px rgba(130, 90, 255, 0.8);
+    }
+
+    .title {
+      position: absolute;
+      left: 50%;
+      bottom: 38px;
+      transform: translateX(-50%);
+      font-size: clamp(30px, 8vw, 72px);
+      font-weight: 950;
+      letter-spacing: 1px;
+      opacity: 0.95;
+      text-align: center;
+      text-shadow:
+        0 0 16px rgba(255, 80, 190, 1),
+        0 0 38px rgba(255, 80, 190, 0.8);
+      animation: breathe 3.2s ease-in-out infinite;
+    }
+
+    @keyframes breathe {
+      0%, 100% {
+        transform: translateX(-50%) scale(1);
+        opacity: 0.82;
+      }
+      50% {
+        transform: translateX(-50%) scale(1.06);
+        opacity: 1;
+      }
+    }
+
+    .start-panel {
+      position: absolute;
+      inset: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(10px);
+    }
+
+    .card {
+      width: min(92vw, 430px);
+      padding: 24px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, rgba(255,255,255,0.14), rgba(255,255,255,0.04));
+      border: 1px solid rgba(255,255,255,0.16);
+      box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+
+    .card h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+    }
+
+    .card p {
+      margin: 8px 0 18px;
+      line-height: 1.5;
+      color: rgba(255,255,255,0.78);
+    }
+
+    .button {
+      display: inline-block;
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 999px;
+      background: #ff4fc3;
+      color: white;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 0 24px rgba(255,79,195,0.55);
+      border: none;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .small-button {
+      background: rgba(255,255,255,0.12);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    input[type="file"] { display: none; }
+
+    .hint {
+      margin-top: 14px;
+      font-size: 13px;
+      opacity: 0.7;
+    }
+
+    .hidden { display: none; }
+
+    audio { display: none; }
+  </style>
+</head>
+
+<body>
+  <div class="screen">
+    <div class="dna" id="dna"></div>
+    <div class="title">Te amo ❤️</div>
+
+    <div class="start-panel" id="startPanel">
+      <div class="card">
+        <h1>Te Amo DNA</h1>
+        <p>
+          Coloca este HTML e a música na mesma pasta com o nome:
+          <br><b>experience.mp3</b>
+        </p>
+
+        <button class="button" id="startButton">Iniciar com experience.mp3</button>
+
+        <label class="button small-button" for="audioFile">Ou escolher música manualmente</label>
+        <input id="audioFile" type="file" accept="audio/*" />
+
+        <div class="hint">
+          No Android pode ser necessário abrir por um gestor/editor de ficheiros para o navegador conseguir ler a música local.
+        </div>
+      </div>
+    </div>
+
+    <audio id="music" src="experience.mp3" preload="auto"></audio>
+  </div>
+
+  <script>
+    const dna = document.getElementById("dna");
+    const music = document.getElementById("music");
+    const audioFile = document.getElementById("audioFile");
+    const startPanel = document.getElementById("startPanel");
+    const startButton = document.getElementById("startButton");
+
+    const config = {
+      text: "Te amo",
+      heart: "💞",
+      lines: 52,
+      verticalSpacing: 30,
+      amplitude: 185,
+      waveSpeed: 0.135,
+      baseRotationSpeed: 0.72,
+      cinematicBuild: 0.38,
+      perspective: 0.58
+    };
+
+    const elements = [];
+
+    function createDNA() {
+      dna.innerHTML = "";
+      elements.length = 0;
+
+      for (let i = 0; i < config.lines; i++) {
+        const line = document.createElement("div");
+        line.className = "line";
+        dna.appendChild(line);
+        elements.push(line);
+      }
+    }
+
+    function createSpacedText(text, amount) {
+      const spaces = " ".repeat(Math.round(amount));
+      return text.split("").join(spaces);
+    }
+
+    function animate(time) {
+      const t = time * 0.001;
+      const center = config.lines / 2;
+      const songTime = music.currentTime || 0;
+
+      const progress = music.duration ? Math.min(songTime / music.duration, 1) : 0;
+      const build = 1 + progress * config.cinematicBuild;
+
+      elements.forEach((line, i) => {
+        const y = (i - center) * config.verticalSpacing;
+        const phase =
+          i * config.waveSpeed +
+          songTime * config.baseRotationSpeed +
+          Math.sin(t * 0.18) * 0.15;
+
+        const x = Math.sin(phase) * config.amplitude * build;
+        const depth = Math.cos(phase);
+
+        const scale = 1 + depth * config.perspective * 0.24;
+        const opacity = 0.38 + (depth + 1) * 0.31;
+        const blur = depth < -0.42 ? 1.15 : 0;
+
+        const spread = Math.abs(Math.sin(phase)) * 5.2;
+        const spaced = createSpacedText(config.text, spread);
+
+        line.innerHTML = `
+          <span>${spaced}</span>
+          <span class="heart"> ${config.heart} </span>
+          <span>${spaced}</span>
+        `;
+
+        line.style.transform =
+          `translate(calc(-50% + ${x}px), calc(-50% + ${y}px)) scale(${scale})`;
+
+        line.style.opacity = opacity;
+        line.style.filter = `blur(${blur}px) brightness(${1 + progress * 0.35})`;
+        line.style.zIndex = Math.round(scale * 100);
+      });
+
+      requestAnimationFrame(animate);
+    }
+
+    async function startExperience() {
+      try {
+        music.currentTime = 0;
+        startPanel.classList.add("hidden");
+        await music.play();
+      } catch (error) {
+        startPanel.classList.remove("hidden");
+        alert(
+          "Não consegui tocar experience.mp3 automaticamente. " +
+          "Confirma se o ficheiro está na mesma pasta e com este nome exato, ou escolhe manualmente."
+        );
+      }
+    }
+
+    startButton.addEventListener("click", startExperience);
+
+    audioFile.addEventListener("change", async function () {
+      const file = this.files[0];
+      if (!file) return;
+
+      music.src = URL.createObjectURL(file);
+      music.currentTime = 0;
+      startPanel.classList.add("hidden");
+
+      try {
+        await music.play();
+      } catch (error) {
+        alert("Toca novamente no ecrã para permitir o áudio.");
+      }
+    });
+
+    document.body.addEventListener("click", () => {
+      if (music.src && music.paused && startPanel.classList.contains("hidden")) {
+        music.play().catch(() => {});
+      }
+    });
+
+    createDNA();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
